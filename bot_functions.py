@@ -1,4 +1,7 @@
 
+
+__author__ = 'Yegor Yershov'
+
 async def poll(update, context, answers, question, allows_multiple_answers=False) -> None:
 	message = await context.bot.send_poll(
 		update.effective_chat.id,
@@ -13,6 +16,7 @@ async def poll(update, context, answers, question, allows_multiple_answers=False
 			"questions": answers,
 			"message_id": message.message_id,
 			"chat_id": update.effective_chat.id,
+			"allows_multiple_answers":allows_multiple_answers,
 			"answers": 0,
 		}
 	}

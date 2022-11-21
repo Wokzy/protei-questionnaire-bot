@@ -11,8 +11,9 @@ from telegram import (
 	Update,
 )
 
+from constants import INTRO
 from telegram.constants import ParseMode
-from questionnaire_functions import q_functions as qf
+from questionnaire_functions import struct_info #import q_functions as qf
 from telegram.ext import (
 	Application,
 	CommandHandler,
@@ -23,6 +24,10 @@ from telegram.ext import (
 	filters,
 )
 
+
+__author__ = 'Yegor Yershov'
+
+
 global TOKEN, users_cache
 TOKEN = utils.load_token()
 users_cache = utils.load_users_cache() # {'user_id':data...}
@@ -32,7 +37,7 @@ async def process_qf(user, data, update, context: ContextTypes.DEFAULT_TYPE, cha
 	global users_cache
 
 	if users_cache[user]['status'] != 'finished':
-		users_cache[user] = await qf[users_cache[user]['status']](user_data = users_cache[user], update=update,
+		users_cache[user] = await struct_info(user_data = users_cache[user], update=update,
 															recieved_data=data, context=context, chat_id=chat_id)
 		utils.dump_users_cache(users_cache)
 
@@ -47,10 +52,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	user = update.message.from_user.id
 
 	#if user not in users_cache:
-	await update.message.reply_text(
-		"Привет! Спасибо за интерес к нашей компании. Более 20 лет ПРОТЕЙ производит ПО в сфере телекоммуникаций. "
-		"Мы всегда рады новым сотрудникам, проходи опрос и, возможно, скоро ты станешь частью нашей команды!"
-	)
+	await update.message.reply_text(INTRO)
 	#else:
 	#	await update.message.reply_text('Чтож, начнём сначала')
 
@@ -65,10 +67,14 @@ async def receive_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE
 	answered_poll = context.bot_data[answer.poll_id]
 	try:
 		questions = answered_poll["questions"]
+		if answered_poll['allows_multiple_answers']: # Do not make a list for singular answers
+			data = [questions[i] for i in answer.option_ids]
+		else:
+			data = questions[answer.option_ids[0]]
 	# this means this poll answer update is from an old poll, we can't do our answering then
 	except KeyError:
 		return
-	await process_qf(user=update.effective_user.id, data=[questions[i] for i in answer.option_ids], update=update, context=context, chat_id=answered_poll["chat_id"])
+	await process_qf(user=update.effective_user.id, data=data, update=update, context=context, chat_id=answered_poll["chat_id"])
 	#answered_poll["answers"] += 1
 	#if answered_poll["answers"] == 1:
 	await context.bot.stop_poll(answered_poll["chat_id"], answered_poll["message_id"])
