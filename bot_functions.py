@@ -2,9 +2,9 @@
 
 __author__ = 'Yegor Yershov'
 
-async def poll(update, context, answers, question, allows_multiple_answers=False) -> None:
+async def poll(chat_id, context, answers, question, allows_multiple_answers=False) -> None:
 	message = await context.bot.send_poll(
-		update.effective_chat.id,
+		chat_id,
 		question,
 		answers,
 		is_anonymous=False,
@@ -15,7 +15,7 @@ async def poll(update, context, answers, question, allows_multiple_answers=False
 		message.poll.id: {
 			"questions": answers,
 			"message_id": message.message_id,
-			"chat_id": update.effective_chat.id,
+			"chat_id": chat_id,
 			"allows_multiple_answers":allows_multiple_answers,
 			"answers": 0,
 		}

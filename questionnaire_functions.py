@@ -1,19 +1,9 @@
 import bot_functions as bf
-from constants import MAIN_RESULT_KEY
+from constants import MAIN_RESULT_KEY, questions_sequence
 
 
 __author__ = 'Yegor Yershov'
 
-
-global questions_sequence
-questions_sequence = \
-[
-{'type':'message', 'text':'ФИО', 'result_key':MAIN_RESULT_KEY},
-{'type':'message', 'text':'Твой контакт для связи (тел, тг)', 'result_key':'contacts'},
-{'type':'poll', 'question':'Хотел бы в будущем работать по специальности?', 'answers':['ДА', 'НЕТ'], 'result_key':'occupation_connected_with_speciality'},
-{'type':'message', 'text':'Что из изученного по программе тебе понравилось больше всего? Почему?', 'result_key':'users_favourite_from_studies'},
-{'type':'poll', 'question':'Курс?', 'answers':['1', '2', '3', '4', '5', 'Магистратура', 'Аспирантура'], 'result_key':'course'},#, 'allows_multiple_answers':False},
-]
 
 
 async def finish(user_data, context, chat_id):
@@ -47,7 +37,7 @@ async def struct_info(user_data, recieved_data, update, context, chat_id):
 		#TODO replace poll on buttons
 		if 'allows_multiple_answers' not in question:
 			question['allows_multiple_answers'] = False
-		await bf.poll(update, context, answers=question['answers'], question=question['question'], allows_multiple_answers=question['allows_multiple_answers'])
+		await bf.poll(chat_id, context, answers=question['answers'], question=question['question'], allows_multiple_answers=question['allows_multiple_answers'])
 
 	return user_data
 

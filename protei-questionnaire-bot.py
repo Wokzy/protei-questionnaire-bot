@@ -11,7 +11,7 @@ from telegram import (
 	Update,
 )
 
-from constants import INTRO
+from constants import INTRO, questions_sequence
 from telegram.constants import ParseMode
 from questionnaire_functions import struct_info #import q_functions as qf
 from telegram.ext import (
@@ -44,7 +44,7 @@ async def process_qf(user, data, update, context: ContextTypes.DEFAULT_TYPE, cha
 		if users_cache[user]['status'] == 'finished':
 			utils.save_result(data=users_cache[user])
 	else:
-		await context.bot.send_message(update.message.chat.id, 'Вы уже заполнили анкету, чтобы сделать это снова, введи /start')
+		await context.bot.send_message(update.message.chat.id, 'Вы уже заполнили анкету, чтобы сделать это снова, введите /start')
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -58,7 +58,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 	users_cache[user] = {'status':0, 'state':'message'}
 
-	await context.bot.send_message(chat_id=update.message.chat.id, text='ФИО')
+	await context.bot.send_message(chat_id=update.message.chat.id, text=questions_sequence[0]['text'])
 
 
 async def receive_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -84,6 +84,10 @@ async def receive_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	global users_cache
 	user = update.message.from_user.id
+
+	if user not in users_cache:
+		await context.bot.send_message(update.message.chat.id, 'Введите /start для начала')
+		return
 
 	if users_cache[user]['state'] == 'poll':
 		await context.bot.send_message(update.message.chat.id, 'Ответте на опросник')
