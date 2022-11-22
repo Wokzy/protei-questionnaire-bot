@@ -40,10 +40,19 @@ def save_result(data:list, filename = RESULT_FILENAME):
 	res = {}
 
 	for i in data:
-		if i not in [MAIN_RESULT_KEY, 'status', 'state']:
+		if i not in [MAIN_RESULT_KEY, 'status', 'state', 'id']:
 			res[i] = data[i]
 
 	prev_stats[data[MAIN_RESULT_KEY]] = res
 
 	with open(filename, 'w', encoding='utf-8') as f:
 		f.write(yaml.dump(prev_stats, Dumper=yaml.RoundTripDumper, allow_unicode=True))
+
+
+def in_rules(data, cfg):
+	match cfg['result_key']:
+		case 'contacts':
+			if not (data.startswith('@') and ' ' not in data) and not data.isnumeric():
+				return False, 'Введите номер телефона или никнейм тг, начиная с @'
+
+	return (True, )

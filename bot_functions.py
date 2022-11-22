@@ -1,4 +1,4 @@
-
+from telegram import ReplyKeyboardMarkup
 
 __author__ = 'Yegor Yershov'
 
@@ -20,4 +20,24 @@ async def poll(chat_id, context, answers, question, allows_multiple_answers=Fals
 			"answers": 0,
 		}
 	}
+	context.bot_data.update(payload)
+
+
+async def markup(chat_id, context, answers:list, question:str): # answers is list containing lists
+	#markup_buttons = [[string] for string in answers]
+
+	message = await context.bot.send_message(chat_id=chat_id, text=question, 
+											reply_markup=ReplyKeyboardMarkup(answers, one_time_keyboard=True))
+
+	string_answers = []
+	for lst in answers:
+		string_answers += lst
+
+
+	payload = {
+			"answers": string_answers,
+			"message_id": message.message_id,
+			"chat_id": chat_id,
+			}
+
 	context.bot_data.update(payload)
