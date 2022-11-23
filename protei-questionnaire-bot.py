@@ -94,7 +94,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 		if 'answers' not in context.bot_data:
 			await context.bot.send_message(update.message.chat.id, 'Введите /start для начала.')
 			return
-		elif update.message.text not in context.bot_data['answers']:
+		elif update.message.text.lower() not in [s.lower() for s in context.bot_data['answers']]:
 			await context.bot.send_message(update.message.chat.id, 'Выберете вариант ответа из предложенных')
 			return
 	await process_qf(user=user, data=update.message.text, update=update, context=context, chat_id=update.message.chat.id)
