@@ -48,9 +48,10 @@ async def process_qf(user, data, update, context: ContextTypes.DEFAULT_TYPE, cha
 	users_cache[user] = await qf.struct_info(user_data = users_cache[user], update=update,
 														recieved_data=data, context=context, chat_id=chat_id)
 	utils.dump_users_cache(users_cache)
+	utils.save_result(data=users_cache[user])
 
-	if users_cache[user]['status'] == 'finished':
-		utils.save_result(data=users_cache[user])
+	#if users_cache[user]['status'] == 'finished':
+	#	utils.save_result(data=users_cache[user])
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

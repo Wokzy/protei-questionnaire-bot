@@ -32,7 +32,7 @@ def load_users_cache(filename = USERS_CACHE_FILENAME):
 def save_result(data:list, filename = RESULT_FILENAME):
 	try:
 		with open(filename, 'r', encoding='utf-8') as f:
-			prev_stats = yaml.load(f, yaml.RoundTripLoader)
+			prev_stats = yaml.load(f, yaml.RoundTripLoader) or {}
 			f.close()
 	except FileNotFoundError:
 		prev_stats = {}
